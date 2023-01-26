@@ -16,7 +16,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,24 +28,21 @@ import com.example.weather.interfaces.DatePickerInterface;
 
 public class RegisterFragment extends Fragment {
 
-    View view;
-    EditText mobileNumberEditText, calenderEditText, pinCodeEditText, districtEditText, stateEditText, nameEditText
-            ,genderEditText, addressEditText, address2Edittext;
-    TextView registerBtn;
-    LandingViewModel landingViewModel;
-    DatePickerInterface datePickerInterface;
+    private View view;
+    private EditText mobileNumberEditText, calenderEditText, pinCodeEditText, districtEditText, stateEditText, nameEditText
+            , addressEditText, address2Edittext;
+    private  Spinner genderSpinner;
+    private TextView registerBtn;
+    private LandingViewModel landingViewModel;
+    private DatePickerInterface datePickerInterface;
     private static final String TAG = "RegisterFragment";
-    NavController navController;
+    private NavController navController;
 
+    //called after onCreateView
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
-        nameEditText = view.findViewById(R.id.name_ET);
-        genderEditText = view.findViewById(R.id.gender_ET);
-        addressEditText = view.findViewById(R.id.address1_ET);
-        address2Edittext = view.findViewById(R.id.address2_ET);
-
     }
 
     @Override
@@ -71,7 +70,7 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(landingViewModel.onRegisterClick(requireActivity(),mobileNumberEditText.getText().toString(),
-                        nameEditText.getText().toString(),genderEditText.getText().toString(),
+                        nameEditText.getText().toString(),genderSpinner.getSelectedItem().toString(),
                         calenderEditText.getText().toString(),addressEditText.getText().toString(),
                         address2Edittext.getText().toString(),pinCodeEditText.getText().toString(),
                         districtEditText.getText().toString(), stateEditText.getText().toString())) {
@@ -118,12 +117,20 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus)
-                landingViewModel.openCalender(requireActivity(),datePickerInterface);
+                    landingViewModel.openCalender(requireActivity(),datePickerInterface);
             }
         });
     }
 
     private void viewId() {
+        nameEditText = view.findViewById(R.id.name_ET);
+        addressEditText = view.findViewById(R.id.address1_ET);
+        address2Edittext = view.findViewById(R.id.address2_ET);
+        genderSpinner = view.findViewById(R.id.gender_SP);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireActivity(),
+                R.array.array_gender, androidx.transition.R.layout.support_simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genderSpinner.setAdapter(adapter);
         mobileNumberEditText = view.findViewById(R.id.mobile_ET);
         calenderEditText = view.findViewById(R.id.dob_ET);
         pinCodeEditText = view.findViewById(R.id.pin_code_ET);
@@ -134,7 +141,7 @@ public class RegisterFragment extends Fragment {
             @Override
             public void settingDate(int year, int monthOfYear, int dayOfMonth) {
                 calenderEditText.setText(dayOfMonth + "/"
-                                + (monthOfYear + 1) + "/" + year);
+                        + (monthOfYear + 1) + "/" + year);
             }
 
             @Override

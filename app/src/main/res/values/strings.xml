@@ -9,7 +9,7 @@
     <string name="yes">Yes</string>
     <string name="sure_exit">Are you sure you want to exit?</string>
 
-    //ladning fragment
+<!--    //ladning fragment-->
     <string name="logo_txt">Logo</string>
     <string name="main_description">Mobile app for use to list down multiple profiles in same registered user</string>
     <string name="hint_mobile">Mobile Number</string>
@@ -17,6 +17,14 @@
     <string name="landing_title">Landing screen</string>
 
     <!--    register fragment-->
+    <string-array name="array_gender">
+    <item>Gender *</item>
+    <item>Male</item>
+    <item>Female</item>
+    <item>Others</item>
+    <item>Rather not to say</item>
+    </string-array>
+
     <string name="hint_name">Full Name *</string>
     <string name="name">Name</string>
     <string name="hint_gender">Gender *</string>
@@ -45,8 +53,8 @@
     <string name="address_valid_error">It must contain four characters.</string>
     <string name="phone_empty_error">Please enter phone number</string>
     <string name="phone_valid_error">It must contain ten digits.</string>
-    <string name="gender_empty_error">Please enter gender</string>
-    <string name="gender_valid_error">Please enter valid gender.</string>
+    <string name="gender_empty_error">Please select gender</string>
+    <string name="gender_select_error">Please select valid gender.</string>
     <string name="pincode_empty_error">Please enter pincode.</string>
     <string name="pincode_valid_error">Please enter valid pincode.</string>
     <string name="dob_empty_error">Please enter dob.</string>
