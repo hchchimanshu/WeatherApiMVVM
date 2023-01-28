@@ -2,7 +2,8 @@
 
 Libraries Added :
 
-//    navigation
+    //navigation
+    
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
     
@@ -13,6 +14,13 @@ Libraries Added :
     
         //sdp
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
+    
+Used :
+-One ViewModel Class(MVVM)
+-Three Repositories(MVVM)
+-One Activity
+-Four Fragments
+
     
 ![Screenshot_2023-01-28-17-55-13-29_067ca54d029a1c65bea8d27590265e45](https://user-images.githubusercontent.com/52179440/215266503-e4d00e7f-c697-4dd2-9f7b-883713caddd8.jpg)
 ![Screenshot_2023-01-28-17-55-25-55_067ca54d029a1c65bea8d27590265e45](https://user-images.githubusercontent.com/52179440/215266513-30d3e7e9-76c0-41a4-b3a2-9bc08368d746.jpg)
