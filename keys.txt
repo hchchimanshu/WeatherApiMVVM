@@ -1,0 +1,6 @@
+WeatherAPI
+
+key store path - D:\Android Projects\keys\weather.jks
+key store password - weather
+Alias - weather
+key password - weather

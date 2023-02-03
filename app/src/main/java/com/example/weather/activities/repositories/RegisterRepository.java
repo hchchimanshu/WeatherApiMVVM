@@ -164,7 +164,11 @@ public class RegisterRepository {
         }
         else if (gender.length()<Constants.FOUR)
         {
-            settingErrorMessage(context.getString(R.string.gender_valid_error));
+            settingErrorMessage(context.getString(R.string.gender_select_error));
+        }
+        else if (gender.equals("Gender *"))
+        {
+            settingErrorMessage(context.getString(R.string.gender_select_error));
         }
         else if (dob.length()==Constants.ZERO)
         {
