@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.weather.R;
 import com.example.weather.activities.viewModel.LandingViewModel;
+import com.example.weather.databinding.FragmentWeatherBinding;
 import com.example.weather.interfaces.DatePickerInterface;
 import com.example.weather.interfaces.GettingWeatherResultInterface;
 import com.example.weather.preferences.Preferences;
@@ -30,29 +31,30 @@ import com.example.weather.preferences.Preferences;
 
 public class WeatherFragment extends Fragment {
 
-    EditText pinCode, state, city;
-    TextView showResult, result, check;
-    View view;
-    LandingViewModel landingViewModel;
-    GettingWeatherResultInterface resultInterface;
-    DatePickerInterface datePickerInterface;
-    NavController navController;
+//    private EditText pinCode, state, city;
+//    private TextView showResult, result, check;
+//    private View view;
+    private LandingViewModel landingViewModel;
+    private GettingWeatherResultInterface resultInterface;
+    private DatePickerInterface datePickerInterface;
+    private NavController navController;
+    FragmentWeatherBinding fragmentWeatherBinding;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
-            pinCode = view.findViewById(R.id.pincode_ET);
-            state = view.findViewById(R.id.state_ap_ET);
-            city = view.findViewById(R.id.city_ap_ET);
-            showResult = view.findViewById(R.id.show_result_btn_TV);
-            result = view.findViewById(R.id.result_TV);
-            check = view.findViewById(R.id.check_btn_TV);
+//            pinCode = view.findViewById(R.id.pincode_ET);
+//            state = view.findViewById(R.id.state_ap_ET);
+//            city = view.findViewById(R.id.city_ap_ET);
+//            showResult = view.findViewById(R.id.show_result_btn_TV);
+//            result = view.findViewById(R.id.result_TV);
+//            check = view.findViewById(R.id.check_btn_TV);
             setHasOptionsMenu(true);
             resultInterface = new GettingWeatherResultInterface() {
                 @Override
                 public void settingWeatherResult(String resultValue) {
-                    result.setText(resultValue);
+                    fragmentWeatherBinding.resultTV.setText(resultValue);
                 }
             };
 
@@ -62,10 +64,20 @@ public class WeatherFragment extends Fragment {
 
                 @Override
                 public void setDistrictAndState(String district, String stateValue, String division) {
-                    state.setText(stateValue);
-                    city.setText(division);
+                    fragmentWeatherBinding.stateApET.setText(stateValue);
+                    fragmentWeatherBinding.cityApET.setText(division);
                 }
             };
+        initId();
+//        pinCode = view.findViewById(R.id.pincode_ET);
+//        state = view.findViewById(R.id.state_ap_ET);
+//        city = view.findViewById(R.id.city_ap_ET);
+
+        getDetails();
+
+        onClickCheckPinCode();
+
+        onClickShowResults();
 //            mainActivity = (MainActivity) getActivity();
 //            pojoArrayList =  new ArrayList<>();
 //            mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -78,20 +90,17 @@ public class WeatherFragment extends Fragment {
         //hide back arrow
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-        view = inflater.inflate(R.layout.fragment_weather, container, false);
-
         landingViewModel = new ViewModelProvider(this).get(LandingViewModel.class);
 
-        initId();
-//        pinCode = view.findViewById(R.id.pincode_ET);
-//        state = view.findViewById(R.id.state_ap_ET);
-//        city = view.findViewById(R.id.city_ap_ET);
+        fragmentWeatherBinding = FragmentWeatherBinding.inflate(inflater,container,false);
 
-        getDetails();
+        return fragmentWeatherBinding.getRoot();
+//        view = inflater.inflate(R.layout.fragment_weather, container, false);
+//        return view;
 
-        onClickCheckPinCode();
 
-        onClickShowResults();
+
+
 
 
 
@@ -107,21 +116,21 @@ public class WeatherFragment extends Fragment {
 //
 //        requireActivity().getOnBackPressedDispatcher().addCallback(
 //                requireActivity(),callback);
-        return view;
+
     }
 
     private void initId() {
 //        navController = Navigation.findNavController(view);
-        pinCode = view.findViewById(R.id.pincode_ET);
-        state = view.findViewById(R.id.state_ap_ET);
-        city = view.findViewById(R.id.city_ap_ET);
-        showResult = view.findViewById(R.id.show_result_btn_TV);
-        result = view.findViewById(R.id.result_TV);
-        check = view.findViewById(R.id.check_btn_TV);
+//        pinCode = view.findViewById(R.id.pincode_ET);
+//        state = view.findViewById(R.id.state_ap_ET);
+//        city = view.findViewById(R.id.city_ap_ET);
+//        showResult = view.findViewById(R.id.show_result_btn_TV);
+//        result = view.findViewById(R.id.result_TV);
+//        check = view.findViewById(R.id.check_btn_TV);
         resultInterface = new GettingWeatherResultInterface() {
             @Override
             public void settingWeatherResult(String resultValue) {
-                result.setText(resultValue);
+                fragmentWeatherBinding.resultTV.setText(resultValue);
             }
         };
 
@@ -131,34 +140,34 @@ public class WeatherFragment extends Fragment {
 
             @Override
             public void setDistrictAndState(String district, String stateValue, String division) {
-                state.setText(stateValue);
-                city.setText(division);
+                fragmentWeatherBinding.stateApET.setText(stateValue);
+                fragmentWeatherBinding.cityApET.setText(division);
             }
         };
     }
 
     private void onClickCheckPinCode() {
-        check.setOnClickListener(new View.OnClickListener() {
+        fragmentWeatherBinding.checkBtnTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                landingViewModel.hitAPI(Integer.valueOf(pinCode.getText().toString()),requireActivity(),datePickerInterface);
+                landingViewModel.hitAPI(Integer.valueOf(fragmentWeatherBinding.pincodeET.getText().toString()),requireActivity(),datePickerInterface);
             }
         });
     }
 
     private void onClickShowResults() {
-        showResult.setOnClickListener(new View.OnClickListener() {
+        fragmentWeatherBinding.showResultBtnTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                landingViewModel.hitAPI(city.getText().toString(),requireActivity(),resultInterface);
+                landingViewModel.hitAPI(fragmentWeatherBinding.cityApET.getText().toString(),requireActivity(),resultInterface);
             }
         });
     }
 
     private void getDetails() {
-        city.setText(landingViewModel.getCityFromPref(requireActivity()));
-        pinCode.setText(landingViewModel.getPinCodeFromPref(requireActivity()));
-        state.setText(landingViewModel.getStateFromPref(requireActivity()));
+        fragmentWeatherBinding.cityApET.setText(landingViewModel.getCityFromPref(requireActivity()));
+        fragmentWeatherBinding.pincodeET.setText(landingViewModel.getPinCodeFromPref(requireActivity()));
+        fragmentWeatherBinding.stateApET.setText(landingViewModel.getStateFromPref(requireActivity()));
     }
 
     @Override
