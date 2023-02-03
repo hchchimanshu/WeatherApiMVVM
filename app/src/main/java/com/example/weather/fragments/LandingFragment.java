@@ -19,18 +19,36 @@ import android.widget.Toast;
 
 import com.example.weather.R;
 import com.example.weather.activities.viewModel.LandingViewModel;
+import com.example.weather.databinding.FragmentLandingBinding;
 
 public class LandingFragment extends Fragment {
 
-    TextView continueButton;
-    EditText mobileNumberEditText;
-    LandingViewModel landingViewModel;
-    NavController navController;
+//    TextView continueButton;
+//    EditText mobileNumberEditText;
+    private LandingViewModel landingViewModel;
+    private NavController navController;
+    private FragmentLandingBinding fragmentLandingBinding;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
+
+
+        fragmentLandingBinding.continueBtnTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                if(landingViewModel.onContinueClick(fragmentLandingBinding.mobET.getText().toString())) {
+                if(landingViewModel.onContinueClick(fragmentLandingBinding)) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(getString(R.string.number),fragmentLandingBinding.mobET.getText().toString());
+                    navController.navigate(R.id.action_landingFragment_to_registerFragment,bundle);
+                }else{
+                    Toast.makeText(requireContext(), ""+landingViewModel.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
@@ -48,26 +66,17 @@ public class LandingFragment extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         */
 
-        View view = inflater.inflate(R.layout.fragment_landing, container, false);
         landingViewModel = new ViewModelProvider(this).get(LandingViewModel.class);
 
-        continueButton = view.findViewById(R.id.continue_btn_TV);
-        mobileNumberEditText = view.findViewById(R.id.mob_ET);
+        fragmentLandingBinding = FragmentLandingBinding.inflate(inflater,container,false);
+        return fragmentLandingBinding.getRoot();
+        /* removed for using ViewBinding
+//        View view = inflater.inflate(R.layout.fragment_landing, container, false);
+//
+//        continueButton = view.findViewById(R.id.continue_btn_TV);
+//        mobileNumberEditText = view.findViewById(R.id.mob_ET);
+//        return view;
 
-
-        continueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(landingViewModel.onContinueClick(mobileNumberEditText.getText().toString())) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString(getString(R.string.number),mobileNumberEditText.getText().toString());
-                    navController.navigate(R.id.action_landingFragment_to_registerFragment,bundle);
-                }else{
-                    Toast.makeText(requireContext(), ""+landingViewModel.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        return view;
+         */
     }
 }
