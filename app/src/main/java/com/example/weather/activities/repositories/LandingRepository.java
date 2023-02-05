@@ -5,17 +5,35 @@ import android.content.Context;
 import android.widget.DatePicker;
 
 import com.example.weather.activities.constants.Constants;
+import com.example.weather.activities.viewModel.LandingViewModel;
+import com.example.weather.databinding.FragmentLandingBinding;
 import com.example.weather.interfaces.DatePickerInterface;
 
 import java.util.Calendar;
 
 public class LandingRepository {
 
+        private LandingRepository()
+    {
+    }
+
+    public static LandingRepository one_instance = null;
+
+    public static LandingRepository getInstance()
+    {
+        if (one_instance==null)
+        {
+            one_instance= new LandingRepository();
+        }
+        return one_instance;
+    }
+
     String mobileNumber;
     String errorMessage;
 
-    public boolean onContinueClick(String mobileNumber){
-        this.mobileNumber = mobileNumber;
+    public boolean onContinueClick(FragmentLandingBinding fragmentLandingBinding){
+
+        this.mobileNumber = fragmentLandingBinding.mobET.getText().toString();
         return checkValidations();
     }
 
