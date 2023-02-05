@@ -16,6 +16,21 @@ import retrofit2.Response;
 
 public class WeatherRepository {
 
+    private WeatherRepository()
+    {
+    }
+
+    public static WeatherRepository one_instance = null;
+
+    public static WeatherRepository getInstance()
+    {
+        if (one_instance==null)
+        {
+            one_instance= new WeatherRepository();
+        }
+        return one_instance;
+    }
+
     private Api api;
 
     public String getCityFromPref(Context context) {
@@ -59,11 +74,7 @@ public class WeatherRepository {
                         response.body().main.getTemp_max()+response.body().main.getTemp_min() +
                         context.getString(R.string.humidity)+response.body().main.getHumidity()+
                         context.getString(R.string.clouds)+response.body().clouds.getAll()));
-//                result.setText(String.valueOf(getString(R.string.temperature)+response.body().main.getTemp()+
-//                        getString(R.string.max_temperature)+response.body().main.getTemp_max()+
-//                        +response.body().main.getTemp_min() +
-//                        getString(R.string.humidity)+response.body().main.getHumidity()+
-//                        getString(R.string.clouds)+response.body().clouds.getAll()));
+
             }
 
             @Override
