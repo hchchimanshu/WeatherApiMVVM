@@ -31,6 +31,21 @@ import retrofit2.Response;
 
 public class RegisterRepository {
 
+    private RegisterRepository()
+    {
+    }
+
+    public static RegisterRepository one_instance = null;
+
+    public static RegisterRepository getInstance()
+    {
+        if (one_instance==null)
+        {
+            one_instance= new RegisterRepository();
+        }
+        return one_instance;
+    }
+
     private Api api;
     private ArrayList<PostOfficePojo> pojoArrayList;
     private static final String TAG = "RegisterRepository";
@@ -164,7 +179,11 @@ public class RegisterRepository {
         }
         else if (gender.length()<Constants.FOUR)
         {
-            settingErrorMessage(context.getString(R.string.gender_valid_error));
+            settingErrorMessage(context.getString(R.string.gender_select_error));
+        }
+        else if (gender.equals("Gender *"))
+        {
+            settingErrorMessage(context.getString(R.string.gender_select_error));
         }
         else if (dob.length()==Constants.ZERO)
         {
