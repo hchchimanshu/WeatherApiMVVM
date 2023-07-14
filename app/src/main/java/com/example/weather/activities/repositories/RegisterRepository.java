@@ -10,6 +10,7 @@ import android.widget.DatePicker;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.weather.R;
 import com.example.weather.activities.MainActivity;
@@ -31,26 +32,21 @@ import retrofit2.Response;
 
 public class RegisterRepository {
 
-    private RegisterRepository()
-    {
-    }
-
-    public static RegisterRepository one_instance = null;
-
-    public static RegisterRepository getInstance()
-    {
-        if (one_instance==null)
-        {
-            one_instance= new RegisterRepository();
-        }
-        return one_instance;
-    }
-
     private Api api;
     private ArrayList<PostOfficePojo> pojoArrayList;
     private static final String TAG = "RegisterRepository";
     String mobileNumber, name, gender, dob, address1, address2, pinCode, district, state;
     String errorMessage;
+
+    private MutableLiveData<List<Pojo>> mutableLiveData;
+
+    public RegisterRepository() {
+        mutableLiveData = new MutableLiveData<>();
+    }
+
+    public MutableLiveData<List<Pojo>> getMutableLiveData(){
+        return mutableLiveData;
+    }
 
     public void openCalender(FragmentActivity context, DatePickerInterface datePickerInterface) {
         final Calendar c = Calendar.getInstance();
@@ -117,13 +113,10 @@ public class RegisterRepository {
                 Log.d(TAG, "onResponse: ");
 //                mainActivity.dismissProgressBar();
                 if (response.body().get(Constants.ZERO).getStatus().equals(context.getString(R.string.success))) {
-//                    datePickerInterface.setDistrictAndState(pojoArrayList.get(Constants.ZERO).getDistrict(),
-//                            pojoArrayList.get(Constants.ZERO).getState());
+                    mutableLiveData.postValue(response.body());
                     pojoArrayList = response.body().get(Constants.ZERO).getPostOffice();
-                    datePickerInterface.setDistrictAndState(pojoArrayList.get(Constants.ZERO).getDistrict(),
-                            pojoArrayList.get(Constants.ZERO).getState(),pojoArrayList.get(Constants.ZERO).getDivision());
-//                    district.setText(pojoArrayList.get(Constants.ZERO).getDistrict());
-//                    state.setText(pojoArrayList.get(Constants.ZERO).getState());
+//                    datePickerInterface.setDistrictAndState(pojoArrayList.get(Constants.ZERO).getDistrict(),
+//                            pojoArrayList.get(Constants.ZERO).getState(),pojoArrayList.get(Constants.ZERO).getDivision());
                     hideKeyboard(context);
 
                 }
@@ -138,6 +131,7 @@ public class RegisterRepository {
 //                mainActivity.dismissProgressBar();
                 Toast.makeText(context, ""+t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onFailure: "+t.getMessage());
+                mutableLiveData.postValue(null);
             }
         });
     }
@@ -179,11 +173,7 @@ public class RegisterRepository {
         }
         else if (gender.length()<Constants.FOUR)
         {
-            settingErrorMessage(context.getString(R.string.gender_select_error));
-        }
-        else if (gender.equals("Gender *"))
-        {
-            settingErrorMessage(context.getString(R.string.gender_select_error));
+            settingErrorMessage(context.getString(R.string.gender_valid_error));
         }
         else if (dob.length()==Constants.ZERO)
         {

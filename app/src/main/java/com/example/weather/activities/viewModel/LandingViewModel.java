@@ -3,19 +3,24 @@ package com.example.weather.activities.viewModel;
 import android.content.Context;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.weather.activities.repositories.LandingRepository;
 import com.example.weather.activities.repositories.RegisterRepository;
 import com.example.weather.activities.repositories.WeatherRepository;
 import com.example.weather.interfaces.DatePickerInterface;
-import com.example.weather.interfaces.GettingWeatherResultInterface;
+import com.example.weather.models.Pojo;
+import com.example.weather.models.WeatherDetailPojo;
+
+import java.util.List;
 
 public class LandingViewModel extends ViewModel {
 
     LandingRepository landingRepository = new LandingRepository();
     RegisterRepository registerRepository = new RegisterRepository();
     WeatherRepository weatherRepository = new WeatherRepository();
+
 
     public boolean onContinueClick(String mobileNumber){
         return landingRepository.onContinueClick(mobileNumber);
@@ -34,8 +39,12 @@ public class LandingViewModel extends ViewModel {
         registerRepository.hitAPI(pinCode,context, datePickerInterface);
     }
 
+    public MutableLiveData<List<Pojo>> getMutableLiveDat(){
+        return registerRepository.getMutableLiveData();
+    }
+
     public boolean onRegisterClick(Context context,String mobileNumber, String name, String gender, String dob,
-                        String address, String address2, String pinCode, String district,
+                                   String address, String address2, String pinCode, String district,
                                    String state){
         return registerRepository.onRegisterClick(context,mobileNumber,name,gender,dob,address,address2,pinCode,district,state);
     }
@@ -56,8 +65,12 @@ public class LandingViewModel extends ViewModel {
         return weatherRepository.getStateFromPref(context);
     }
 
-    public void hitAPI(String city, FragmentActivity context, GettingWeatherResultInterface resultInterface) {
-        weatherRepository.hitApi(city,context, resultInterface);
+    public void hitAPI(String city, FragmentActivity context) {
+        weatherRepository.hitApi(city,context);
+    }
+
+    public MutableLiveData<WeatherDetailPojo> getMutableLiveData(){
+        return weatherRepository.getMutableLiveData();
     }
 
     public String getDetailsFromPref(Context context) {

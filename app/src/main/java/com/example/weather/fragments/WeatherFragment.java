@@ -7,10 +7,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,10 +24,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.weather.R;
+import com.example.weather.activities.constants.Constants;
 import com.example.weather.activities.viewModel.LandingViewModel;
 import com.example.weather.interfaces.DatePickerInterface;
-import com.example.weather.interfaces.GettingWeatherResultInterface;
+import com.example.weather.models.Pojo;
+import com.example.weather.models.WeatherDetailPojo;
 import com.example.weather.preferences.Preferences;
+
+import java.util.List;
 
 
 public class WeatherFragment extends Fragment {
@@ -34,38 +40,32 @@ public class WeatherFragment extends Fragment {
     TextView showResult, result, check;
     View view;
     LandingViewModel landingViewModel;
-    GettingWeatherResultInterface resultInterface;
     DatePickerInterface datePickerInterface;
     NavController navController;
+    private static final String TAG = "WeatherFragment";
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
-            pinCode = view.findViewById(R.id.pincode_ET);
-            state = view.findViewById(R.id.state_ap_ET);
-            city = view.findViewById(R.id.city_ap_ET);
-            showResult = view.findViewById(R.id.show_result_btn_TV);
-            result = view.findViewById(R.id.result_TV);
-            check = view.findViewById(R.id.check_btn_TV);
-            setHasOptionsMenu(true);
-            resultInterface = new GettingWeatherResultInterface() {
-                @Override
-                public void settingWeatherResult(String resultValue) {
-                    result.setText(resultValue);
-                }
-            };
+        pinCode = view.findViewById(R.id.pincode_ET);
+        state = view.findViewById(R.id.state_ap_ET);
+        city = view.findViewById(R.id.city_ap_ET);
+        showResult = view.findViewById(R.id.show_result_btn_TV);
+        result = view.findViewById(R.id.result_TV);
+        check = view.findViewById(R.id.check_btn_TV);
+        setHasOptionsMenu(true);
 
-            datePickerInterface = new DatePickerInterface() {
-                @Override
-                public void settingDate(int year, int month, int day) {}
+        datePickerInterface = new DatePickerInterface() {
+            @Override
+            public void settingDate(int year, int month, int day) {}
 
-                @Override
-                public void setDistrictAndState(String district, String stateValue, String division) {
-                    state.setText(stateValue);
-                    city.setText(division);
-                }
-            };
+            @Override
+            public void setDistrictAndState(String district, String stateValue, String division) {
+                state.setText(stateValue);
+                city.setText(division);
+            }
+        };
 //            mainActivity = (MainActivity) getActivity();
 //            pojoArrayList =  new ArrayList<>();
 //            mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -81,6 +81,27 @@ public class WeatherFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_weather, container, false);
 
         landingViewModel = new ViewModelProvider(this).get(LandingViewModel.class);
+
+        landingViewModel.getMutableLiveDat().observe(requireActivity(), new Observer<List<Pojo>>() {
+            @Override
+            public void onChanged(List<Pojo> pojos) {
+                Log.d(TAG, "onChanged: ");
+                state.setText(pojos.get(Constants.ZERO).getPostOffice().get(Constants.ZERO).getState());
+                city.setText(pojos.get(Constants.ZERO).getPostOffice().get(Constants.ZERO).getDivision());
+            }
+        });
+        landingViewModel.getMutableLiveData().observe(requireActivity(), new Observer<WeatherDetailPojo>() {
+            @Override
+            public void onChanged(WeatherDetailPojo weatherDetailPojo) {
+                Log.d(TAG, "onChanged: Observer");
+                result.setText(String.valueOf(requireActivity().getString(R.string.temperature)+
+                        weatherDetailPojo.main.getTemp()+ requireActivity().getString(R.string.max_temperature)+
+                        weatherDetailPojo.main.getTemp_max()+ requireActivity().getString(R.string.min_temperature)+
+                        weatherDetailPojo.main.getTemp_min() + requireActivity().getString(R.string.humidity)+
+                        weatherDetailPojo.main.getHumidity()+ requireActivity().getString(R.string.clouds)+
+                        weatherDetailPojo.clouds.getAll()));
+            }
+        });
 
         initId();
 //        pinCode = view.findViewById(R.id.pincode_ET);
@@ -118,12 +139,6 @@ public class WeatherFragment extends Fragment {
         showResult = view.findViewById(R.id.show_result_btn_TV);
         result = view.findViewById(R.id.result_TV);
         check = view.findViewById(R.id.check_btn_TV);
-        resultInterface = new GettingWeatherResultInterface() {
-            @Override
-            public void settingWeatherResult(String resultValue) {
-                result.setText(resultValue);
-            }
-        };
 
         datePickerInterface = new DatePickerInterface() {
             @Override
@@ -131,8 +146,9 @@ public class WeatherFragment extends Fragment {
 
             @Override
             public void setDistrictAndState(String district, String stateValue, String division) {
-                state.setText(stateValue);
-                city.setText(division);
+                Log.d(TAG, "setDistrictAndState: ");
+//                state.setText(stateValue);
+//                city.setText(division);
             }
         };
     }
@@ -150,7 +166,7 @@ public class WeatherFragment extends Fragment {
         showResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                landingViewModel.hitAPI(city.getText().toString(),requireActivity(),resultInterface);
+                landingViewModel.hitAPI(city.getText().toString(),requireActivity());
             }
         });
     }

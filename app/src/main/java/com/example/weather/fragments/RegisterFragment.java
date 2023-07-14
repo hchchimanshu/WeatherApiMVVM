@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -21,8 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.weather.R;
+import com.example.weather.activities.constants.Constants;
 import com.example.weather.activities.viewModel.LandingViewModel;
 import com.example.weather.interfaces.DatePickerInterface;
+import com.example.weather.models.Pojo;
+
+import java.util.List;
 
 public class RegisterFragment extends Fragment {
 
@@ -52,6 +57,16 @@ public class RegisterFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_register, container, false);
         landingViewModel = new ViewModelProvider(this).get(LandingViewModel.class);
+        landingViewModel.getMutableLiveDat().observe(requireActivity(), new Observer<List<Pojo>>() {
+            @Override
+            public void onChanged(List<Pojo> pojos) {
+                Log.d(TAG, "onChanged: Overserver via Mutable Live Data District:"+
+                        pojos.get(Constants.ZERO).getPostOffice().get(Constants.ZERO).getDistrict()
+                        +" state:"+pojos.get(Constants.ZERO).getPostOffice().get(Constants.ZERO).getState());
+                districtEditText.setText(pojos.get(Constants.ZERO).getPostOffice().get(Constants.ZERO).getDistrict());
+                stateEditText.setText(pojos.get(Constants.ZERO).getPostOffice().get(Constants.ZERO).getState());
+            }
+        });
 
         viewId();
 
@@ -70,6 +85,11 @@ public class RegisterFragment extends Fragment {
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "onClick: M:"+mobileNumberEditText.getText().toString()+
+                        " N:"+nameEditText.getText().toString()+" G:"+genderEditText.getText().toString()+
+                        " C:"+calenderEditText.getText().toString()+ " A:"+addressEditText.getText().toString()+
+                        " A:"+address2Edittext.getText().toString()+ " P:"+pinCodeEditText.getText().toString()+
+                        " D:"+districtEditText.getText().toString()+ " S:"+stateEditText.getText().toString());
                 if(landingViewModel.onRegisterClick(requireActivity(),mobileNumberEditText.getText().toString(),
                         nameEditText.getText().toString(),genderEditText.getText().toString(),
                         calenderEditText.getText().toString(),addressEditText.getText().toString(),
@@ -118,7 +138,7 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus)
-                landingViewModel.openCalender(requireActivity(),datePickerInterface);
+                    landingViewModel.openCalender(requireActivity(),datePickerInterface);
             }
         });
     }
@@ -134,13 +154,14 @@ public class RegisterFragment extends Fragment {
             @Override
             public void settingDate(int year, int monthOfYear, int dayOfMonth) {
                 calenderEditText.setText(dayOfMonth + "/"
-                                + (monthOfYear + 1) + "/" + year);
+                        + (monthOfYear + 1) + "/" + year);
             }
 
             @Override
             public void setDistrictAndState(String district, String state, String division) {
-                districtEditText.setText(district);
-                stateEditText.setText(state);
+                Log.d(TAG, "setDistrictAndState: ");
+//                districtEditText.setText(district);
+//                stateEditText.setText(state);
             }
         };
     }
